@@ -10,18 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import json
 import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+secret_file = os.path.join(BASE_DIR, 'secrets.json')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
+
+def get_secret(setting, secrets=secrets):
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+    
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#@20+o3#s&tqb2mcn=rwk2fysu1)h1wtg1xquw(f032h3pk=^u"
+SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -134,7 +147,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+    'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE':
+    3,
 }
+
+# CORS 허용 도메인 설정
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Flutter 디버그 모드에서 사용하는 URL
+    'http://8',  # 실제 앱 URL
+]
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'

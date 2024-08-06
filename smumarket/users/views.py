@@ -30,8 +30,6 @@ class ProfileView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         profile.nickname = data['nickname']
-        profile.position = data['position']
-        profile.subjects = data['subjects']
         if request.data['image']:
             profile.image = request.data['image']
         profile.save()

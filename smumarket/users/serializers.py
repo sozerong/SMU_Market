@@ -58,5 +58,5 @@ class LoginSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("nickname", "position", "subjects")
+        fields = ("nickname")
         # extra_kwargs = {"image": {"required": False, "allow_null": True}}
