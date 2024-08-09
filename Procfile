@@ -1,1 +1,1 @@
-web: gunicorn smumarket.wsgi --log-file--
+web: gunicorn smumarket.wsgi
